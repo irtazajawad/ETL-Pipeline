@@ -1,0 +1,89 @@
+.model small
+.stack 100h
+
+.data
+    s dw 3 ; size of the array
+    array db 20 dup (?)
+    array2 db 20 dup (?)
+    prompt1 db "Array 1: $"
+    prompt2 db "Array 2: $"
+    prompt db "Enter a number: $"
+    num dw ?
+.code
+main proc
+    mov ax, @data
+    mov ds, ax
+
+    mov dx, offset prompt1
+    mov ah, 09h
+    int 21h ; display the prompt
+
+    mov si, 0; si = address of the array
+
+get_array:
+    mov dl, 10
+    mov ah, 02h
+    int 21h
+    mov dx, offset prompt
+    mov ah, 09h
+    int 21h ; display the prompt
+    mov ah, 01h
+    int 21h ; get a character from the user
+    sub al, 30h ; convert from ASCII to integer
+    mov array[si], al ; store the value in the array
+    inc si ; move to the next element
+    cmp si, s
+    jne get_array ; repeat for all elements
+
+mov dl, 10
+mov ah, 02h
+int 21h
+mov si, 0
+
+mov dx, offset prompt2
+mov ah, 09h
+int 21h ; display the prompt
+
+
+get_array2:
+    mov dl, 10
+    mov ah, 02h
+    int 21h
+    mov dx, offset prompt
+    mov ah, 09h
+    int 21h ; display the prompt
+    mov ah, 01h
+    int 21h ; get a character from the user
+    sub al, 30h ; convert from ASCII to integer
+    mov array2[si], al ; store the value in the array
+    inc si ; move to the next element
+    cmp si, s
+    jne get_array2 ; repeat for all elements
+
+    mov dl, 10
+    mov ah, 02h
+    int 21h
+
+mov si, 0
+mov ax, s
+mov num, ax
+dec num
+print_array:
+
+    mov di, num
+    mov al, array2[di]
+    add array[si], al
+    add array[si], 30h
+    mov dl, array[si]
+    mov ah, 02h 
+    int 21h   
+    inc si ; move to the next element
+    dec num
+    cmp si, s
+    jne print_array ; repeat for all elements
+
+    mov ah, 4ch
+    int 21h
+
+main endp
+end main
